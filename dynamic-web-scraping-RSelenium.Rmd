@@ -1,0 +1,121 @@
+---
+title: "Dynamic Web Scraping with RSelenium"
+author: "Sofia Lai, Marina Luna"
+date: "10/27/2021"
+output: 
+  html_document:
+    toc: TRUE
+    df_print: paged
+    number_sections: FALSE
+    highlight: tango
+    theme: lumen
+    toc_depth: 3
+    toc_float: true
+    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# First paragraph 
+# Second paragraph
+# Setting up R Selenium 
+1. Download a [Selenium Server](https://www.selenium.dev/downloads/). 
+2. Download the [current version](https://duckduckgo.com/?q=java+download&va=z&t=hk&ia=web) of Java SE Runtime Environment: 
+
+3. Install and load necessary packages 
+```{r, include = T}
+library(tidyverse)
+library(RSelenium)
+library(rvest)
+library(binman)
+```
+
+Or, the cooler way: 
+```{r, include = T}
+pacman::p_load(RSelenium, tidyverse, rvest, binman)
+```
+
+#Initiating a Selenium Server in RStudio 
+1. Check what version of Google Chrome you are using. 
+2. Check what version ChromeDriver you should use, depending on the above...
+```{r}
+binman::list_versions("chromedriver") 
+```
+...and use it as value for chromever: 
+```{r}
+remDr <- rsDriver(browser = "chrome", chromever = "95.0.4638.17")
+rD <- remDr[['client']]
+```
+
+Did it open a new Chrome window? Pretty cool, right? 
+If it didn't, you are probably not using the correct version. Stop the server and try again. 
+```{r}
+rD$server$stop() 
+```
+
+#Practical example
+Now that we're all set, we can start navigating a web page of our choice. Let's go back to our previous example, the European Parliament [press room](https://www.europarl.europa.eu/news/en/press-room). 
+```{r}
+url <- "https://www.europarl.europa.eu/news/en/press-room"
+rD$navigate(url)
+Sys.sleep(5) 
+```
+
+Can you guess why this is a dynamic web page? 
+And what would happen if we tried to use static web scraping tools? (We'll see this in practice later) 
+Hint: click on "load more"... See any difference? 
+
+Let's locate the "load more" button. 
+```{r}
+load_more <- rD$findElement(using ='css selector', "#continuesLoading_button")
+```
+
+Running this will automatically load more content on the web page. Assuming we are interested in more than just the initial 15 headlines, we want to hit the "load more" button several times. We could do this manually, running the code each time, or more efficiently: 
+```{r}
+for(i in 1:5) {
+  print(i)
+  load_more$clickElement()
+  Sys.sleep(10)
+}
+
+```
+Check the web page that RStudio has opened. See how the content is loaded automatically? Sys.sleep(10) creates a time interval of 10 seconds between each time the action is executed.
+
+Once we have loaded enough content, we can get the page source, and then close the connection to the server. 
+```{r}
+page_source <- read_html(url)
+rD$closeServer()
+```
+
+Now, as promised, we can use our good old rvest tools to scrape data from the website. 
+```{r}
+headlines <-read_html(page_source[[1]]) %>%
+  rvest::html_nodes('body') %>%
+  xml2::xml_find_all("//a[contains(@title, 'Read more')]") %>%
+  html_text() %>%
+  trimws() %>% #some cleaning...
+  as_data_frame() %>% 
+  rename(headline = value) %>%
+  mutate(headline = gsub("\\ \n\n", "", headline))
+
+headlines
+```
+Why RSelenium then? 
+You see here he have a nice list of 120 headlines (because we loaded more content 5 times, each time loading 15 more headlines). We could load much more content and have even more headlines. 
+
+Now, if we tried to scrape the headlines just using rvest, this is what happens:
+```{r}
+EP_press <- read_html("https://www.europarl.europa.eu/news/en/press-room")
+headlines_rvest <- EP_press %>%
+  rvest::html_nodes('body') %>%
+  xml2::xml_find_all("//a[contains(@title, 'Read more')]") %>%
+  html_text()  %>% 
+  trimws() %>%
+  as_data_frame() %>%
+  rename(headline = value)
+headlines_rvest
+```
+See? I only get the initial 15! This happens *even if* you manually load more content, you will always only get the first 15 headlines. 
+
+
