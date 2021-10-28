@@ -82,14 +82,11 @@ for(i in 1:5) {
 ```
 Check the web page that RStudio has opened. See how the content is loaded automatically? Sys.sleep(10) creates a time interval of 10 seconds between each time the action is executed.
 
-Once we have loaded enough content, we can get the page source, and then close the connection to the server. 
-```{r}
-page_source <- read_html(url)
-rD$closeServer()
-```
 
 Now, as promised, we can use our good old rvest tools to scrape data from the website. 
 ```{r}
+page_source <- rD$getPageSource()
+
 headlines <-read_html(page_source[[1]]) %>%
   rvest::html_nodes('body') %>%
   xml2::xml_find_all("//a[contains(@title, 'Read more')]") %>%
@@ -102,7 +99,7 @@ headlines <-read_html(page_source[[1]]) %>%
 headlines
 ```
 Why RSelenium then? 
-You see here he have a nice list of 120 headlines (because we loaded more content 5 times, each time loading 15 more headlines). We could load much more content and have even more headlines. 
+You see here he have a nice list of all the headlines we loaded. We could load much more content and have even more headlines. 
 
 Now, if we tried to scrape the headlines just using rvest, this is what happens:
 ```{r}
