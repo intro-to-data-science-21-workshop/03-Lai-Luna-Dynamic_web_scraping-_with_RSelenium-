@@ -14,8 +14,13 @@ output:
     
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      eval = TRUE,
+                      error = FALSE,
+                      message = FALSE,
+                      warning = FALSE,
+                      comment = NA)
 ```
 # First paragraph 
 # Second paragraph
@@ -36,7 +41,7 @@ Or, the cooler way:
 pacman::p_load(RSelenium, tidyverse, rvest, binman)
 ```
 
-#Initiating a Selenium Server in RStudio 
+# Initiating a Selenium Server
 1. Check what version of Google Chrome you are using. 
 2. Check what version ChromeDriver you should use, depending on the above...
 ```{r}
@@ -50,13 +55,10 @@ rD <- remDr[['client']]
 
 Did it open a new Chrome window? Pretty cool, right? 
 If it didn't, you are probably not using the correct version. Stop the server and try again. 
-```{r}
-rD$server$stop() 
-```
 
-#Practical example
+# Practical example
 Now that we're all set, we can start navigating a web page of our choice. Let's go back to our previous example, the European Parliament [press room](https://www.europarl.europa.eu/news/en/press-room). 
-```{r}
+```{r, echo = FALSE}
 url <- "https://www.europarl.europa.eu/news/en/press-room"
 rD$navigate(url)
 Sys.sleep(5) 
