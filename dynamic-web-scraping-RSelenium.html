@@ -332,12 +332,6 @@ div.tocify {
 </div>
 
 
-<div id="first-paragraph" class="section level1">
-<h1>First paragraph</h1>
-</div>
-<div id="second-paragraph" class="section level1">
-<h1>Second paragraph</h1>
-</div>
 <div id="setting-up-r-selenium" class="section level1">
 <h1>Setting up R Selenium</h1>
 <ol style="list-style-type: decimal">
@@ -358,81 +352,11 @@ div.tocify {
 <li>Check what version of Google Chrome you are using.</li>
 <li>Check what version ChromeDriver you should use, depending on the above…</li>
 </ol>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>binman<span class="sc">::</span><span class="fu">list_versions</span>(<span class="st">&quot;chromedriver&quot;</span>) </span></code></pre></div>
 <pre><code>$mac64
 [1] &quot;94.0.4606.61&quot; &quot;95.0.4638.17&quot; &quot;95.0.4638.54&quot; &quot;96.0.4664.18&quot;</code></pre>
 <p>…and use it as value for chromever:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>remDr <span class="ot">&lt;-</span> <span class="fu">rsDriver</span>(<span class="at">browser =</span> <span class="st">&quot;chrome&quot;</span>, <span class="at">chromever =</span> <span class="st">&quot;95.0.4638.17&quot;</span>)</span></code></pre></div>
-<pre><code>[1] &quot;Connecting to remote server&quot;
-$acceptInsecureCerts
-[1] FALSE
-
-$browserName
-[1] &quot;chrome&quot;
-
-$browserVersion
-[1] &quot;95.0.4638.54&quot;
-
-$chrome
-$chrome$chromedriverVersion
-[1] &quot;95.0.4638.17 (a9d0719444d4b035e284ed1fce73bf6ccd789df2-refs/branch-heads/4638@{#178})&quot;
-
-$chrome$userDataDir
-[1] &quot;/var/folders/51/s3cxthl15bn9g94dp8ypwk480000gn/T/.com.google.Chrome.QwjYxP&quot;
-
-
-$`goog:chromeOptions`
-$`goog:chromeOptions`$debuggerAddress
-[1] &quot;localhost:49446&quot;
-
-
-$networkConnectionEnabled
-[1] FALSE
-
-$pageLoadStrategy
-[1] &quot;normal&quot;
-
-$platformName
-[1] &quot;mac os x&quot;
-
-$proxy
-named list()
-
-$setWindowRect
-[1] TRUE
-
-$strictFileInteractability
-[1] FALSE
-
-$timeouts
-$timeouts$implicit
-[1] 0
-
-$timeouts$pageLoad
-[1] 300000
-
-$timeouts$script
-[1] 30000
-
-
-$unhandledPromptBehavior
-[1] &quot;dismiss and notify&quot;
-
-$`webauthn:extension:credBlob`
-[1] TRUE
-
-$`webauthn:extension:largeBlob`
-[1] TRUE
-
-$`webauthn:virtualAuthenticators`
-[1] TRUE
-
-$webdriver.remote.sessionid
-[1] &quot;fd586e948443b4eb1f55ecc75e0e41ee&quot;
-
-$id
-[1] &quot;fd586e948443b4eb1f55ecc75e0e41ee&quot;</code></pre>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>rD <span class="ot">&lt;-</span> remDr[[<span class="st">&#39;client&#39;</span>]]</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>remDr <span class="ot">&lt;-</span> <span class="fu">rsDriver</span>(<span class="at">browser =</span> <span class="st">&quot;chrome&quot;</span>, <span class="at">chromever =</span> <span class="st">&quot;95.0.4638.17&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>rD <span class="ot">&lt;-</span> remDr[[<span class="st">&#39;client&#39;</span>]]</span></code></pre></div>
 <p>Did it open a new Chrome window? Pretty cool, right? If it didn’t, you are probably not using the correct version. Stop the server and try again.</p>
 </div>
 <div id="practical-example" class="section level1">
@@ -440,48 +364,43 @@ $id
 <p>Now that we’re all set, we can start navigating a web page of our choice. Let’s go back to our previous example, the European Parliament <a href="https://www.europarl.europa.eu/news/en/press-room">press room</a>.</p>
 <p>Can you guess why this is a dynamic web page? And what would happen if we tried to use static web scraping tools? (We’ll see this in practice later) Hint: click on “load more”… See any difference?</p>
 <p>Let’s locate the “load more” button.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>load_more <span class="ot">&lt;-</span> rD<span class="sc">$</span><span class="fu">findElement</span>(<span class="at">using =</span><span class="st">&#39;css selector&#39;</span>, <span class="st">&quot;#continuesLoading_button&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>load_more <span class="ot">&lt;-</span> rD<span class="sc">$</span><span class="fu">findElement</span>(<span class="at">using =</span><span class="st">&#39;css selector&#39;</span>, <span class="st">&quot;#continuesLoading_button&quot;</span>)</span></code></pre></div>
 <p>Running this will automatically load more content on the web page. Assuming we are interested in more than just the initial 15 headlines, we want to hit the “load more” button several times. We could do this manually, running the code each time, or more efficiently:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) {</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(i)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  load_more<span class="sc">$</span><span class="fu">clickElement</span>()</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="dv">10</span>)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<pre><code>[1] 1
-[1] 2
-[1] 3
-[1] 4
-[1] 5</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(i)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  load_more<span class="sc">$</span><span class="fu">clickElement</span>()</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="dv">10</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>Check the web page that RStudio has opened. See how the content is loaded automatically? Sys.sleep(10) creates a time interval of 10 seconds between each time the action is executed.</p>
 <p>Now, as promised, we can use our good old rvest tools to scrape data from the website.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>page_source <span class="ot">&lt;-</span> rD<span class="sc">$</span><span class="fu">getPageSource</span>()</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>headlines <span class="ot">&lt;-</span><span class="fu">read_html</span>(page_source[[<span class="dv">1</span>]]) <span class="sc">%&gt;%</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  rvest<span class="sc">::</span><span class="fu">html_nodes</span>(<span class="st">&#39;body&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  xml2<span class="sc">::</span><span class="fu">xml_find_all</span>(<span class="st">&quot;//a[contains(@title, &#39;Read more&#39;)]&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">trimws</span>() <span class="sc">%&gt;%</span> <span class="co">#some cleaning...</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_data_frame</span>() <span class="sc">%&gt;%</span> </span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">headline =</span> value) <span class="sc">%&gt;%</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">headline =</span> <span class="fu">gsub</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st"> </span><span class="sc">\n\n</span><span class="st">&quot;</span>, <span class="st">&quot;&quot;</span>, headline))</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>headlines</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>page_source <span class="ot">&lt;-</span> rD<span class="sc">$</span><span class="fu">getPageSource</span>()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>headlines <span class="ot">&lt;-</span><span class="fu">read_html</span>(page_source[[<span class="dv">1</span>]]) <span class="sc">%&gt;%</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  rvest<span class="sc">::</span><span class="fu">html_nodes</span>(<span class="st">&#39;body&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  xml2<span class="sc">::</span><span class="fu">xml_find_all</span>(<span class="st">&quot;//a[contains(@title, &#39;Read more&#39;)]&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">trimws</span>() <span class="sc">%&gt;%</span> <span class="co">#some cleaning...</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_data_frame</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">headline =</span> value) <span class="sc">%&gt;%</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">headline =</span> <span class="fu">gsub</span>(<span class="st">&quot;</span><span class="sc">\\</span><span class="st"> </span><span class="sc">\n\n</span><span class="st">&quot;</span>, <span class="st">&quot;&quot;</span>, headline))</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>headlines</span></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["headline"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"Cybersecurity: MEPs strengthen EU-wide requirements against threats "},{"1":"Deal on stronger role for EU medicines regulator "},{"1":"Legal migration: an EU talent pool and more options for immigrant entrepreneurs "},{"1":"Hiring vehicles without drivers: provisional deal on new rules "},{"1":"MEPs oppose “breakaway competitions” and call for values-based EU sports model "},{"1":"Turkey: a serious diplomatic crisis that can still be avoided "},{"1":"MEPs to discuss possible EU budget fraud with Slovakian minister of Agriculture "},{"1":"Conference on the Future of Europe: second Plenary session concludes "},{"1":"Parliament to hold its second European Gender Equality Week "},{"1":"EP asks for part of Frontex budget to be frozen until key improvements are made "},{"1":"Poland: Constitutional Tribunal is illegitimate, unfit to interpret constitution "},{"1":"Tunisia: Deep concern about the powers concentrated in the President’s hands "},{"1":"Pandora Papers: MEPs call for investigations, clampdowns and new laws "},{"1":"COVID-19: Parliament wants more transparent EU vaccine policies "},{"1":"Climate change: raise global ambitions to achieve strong outcome at COP26 "},{"1":"European Parliament Press Kit for the European Council of 21-22 October 2021 "},{"1":"Parliament adopts new rules to improve protection of road accident victims "},{"1":"Methane: MEPs want binding target to bring double win for climate and health "},{"1":"EU budget for 2022: MEPs want focus on COVID-19 crisis recovery "},{"1":"EU-Taiwan relations: MEPs push for stronger partnership "},{"1":"EP TODAY "},{"1":"Alexei Navalny awarded the European Parliament’s 2021 Sakharov Prize "},{"1":"MEPs debate high energy prices, rule of law, migration ahead of EU summit "},{"1":"European media needs support to recover from pandemic and face future challenges "},{"1":"MEPs call for minimum social standards for artists and cultural workers "},{"1":"New EU farm to fork strategy to make our food healthier and more sustainable "},{"1":"Conference on the Future of Europe: Plenary to discuss citizens' contributions "},{"1":"Conference on the Future of Europe: how to follow the second Plenary "},{"1":"EP TODAY "},{"1":"Poland: MEPs call for the primacy of EU law to be upheld "},{"1":"EP TODAY "},{"1":"Opening of 18-21 October plenary session "},{"1":"EP TODAY "},{"1":"Press briefing on this week’s plenary session today at 16.30 "},{"1":"Rule of law in Slovenia: MEPs conclude their first mission to the country  "},{"1":"Press briefing on next week’s plenary session - Friday, 15 October, at 11.00 "},{"1":"MEPs want protection for media, NGOs and civil society from abusive lawsuits "},{"1":"Mobile phone roaming: MEPs back extension of free roaming in the EU  "},{"1":"Sakharov Prize 2021: introducing the finalists "},{"1":"The Pegasus Project awarded the 2021 Daphne Caruana Galizia Prize for Journalism "},{"1":"Conference on the Future of Europe: fourth European Citizens’ Panel this weekend "},{"1":"EU values in Slovenia: MEPs to meet national authorities, civil society, media "},{"1":"Essential infrastructure: new rules to boost co-operation and resilience "},{"1":"Climate change: raise global ambitions to achieve strong outcome at COP26 "},{"1":"EU Health: MEPs call for a future-proof EU pharmaceutical policy "},{"1":"European Youth Event 2021: proposals for the future of Europe "},{"1":"Facebook Files: MEPs to invite whistleblower Frances Haugen to a hearing  "},{"1":"Press invitation to join the Award Ceremony of the Daphne Caruana Galizia Prize for Journalism "},{"1":"European Youth Event 2021 kicks off "},{"1":"Human rights breaches in Myanmar and Rwanda "},{"1":"European Parliament calls for repeal of new Texas abortion restriction "},{"1":"Belarus: consider taking the Lukashenka regime to international court, MEPs ask "},{"1":"EU must step up its game against harmful tax practices, says Parliament "},{"1":"Arctic: MEPs call for peace and reduced tension in the region "},{"1":"Disability rights: A European Disability Card to harmonise status across the EU "},{"1":"MEPs demand common EU cyber defensive capabilities "},{"1":"EP TODAY "},{"1":"Hungary and Poland plans should be approved only if concerns are addressed "},{"1":"Use of artificial intelligence by the police: MEPs oppose mass surveillance "},{"1":"European Parliament issues wake-up call on road safety "},{"1":"MEPs call for partnership of equals with US to address global challenges "},{"1":"Parliament slams EU governments during debate on Pandora Papers "},{"1":"Energy costs: MEPs debate measures to limit impact of price rises "},{"1":"Energy infrastructure: Parliament ready to start talks on rules for new projects "},{"1":"Urgent measures needed to protect victims of partner violence in custody battles  "},{"1":"EP TODAY "},{"1":"Parliament sets up new delegation to the EU-UK Parliamentary Assembly\\n "},{"1":"EP Today "},{"1":"Opening of plenary session: debate on Pandora Papers added "},{"1":"EP TODAY "},{"1":"Press briefing on this week’s plenary session today at 16.30 "},{"1":"MEPs vow to support the EU Public Prosecutor's Office "},{"1":"Rule of law in Hungary: MEPs to present their conclusions Monday in Strasbourg "},{"1":"Rule of law in Hungary: MEPs conclude three-day trip to assess the situation "},{"1":"European Youth Event 2021: Shaping Europe’s future "}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["headline"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"Cybersecurity: MEPs strengthen EU-wide requirements against threats "},{"1":"Deal on stronger role for EU medicines regulator "},{"1":"Legal migration: an EU talent pool and more options for immigrant entrepreneurs "},{"1":"Hiring vehicles without drivers: provisional deal on new rules "},{"1":"MEPs oppose “breakaway competitions” and call for values-based EU sports model "},{"1":"Turkey: a serious diplomatic crisis that can still be avoided "},{"1":"MEPs to discuss possible EU budget fraud with Slovakian minister of Agriculture "},{"1":"Conference on the Future of Europe: second Plenary session concludes "},{"1":"Parliament to hold its second European Gender Equality Week "},{"1":"EP asks for part of Frontex budget to be frozen until key improvements are made "},{"1":"Poland: Constitutional Tribunal is illegitimate, unfit to interpret constitution "},{"1":"Tunisia: Deep concern about the powers concentrated in the President’s hands "},{"1":"Pandora Papers: MEPs call for investigations, clampdowns and new laws "},{"1":"COVID-19: Parliament wants more transparent EU vaccine policies "},{"1":"Climate change: raise global ambitions to achieve strong outcome at COP26 "}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 <p>Why RSelenium then? You see here he have a nice list of all the headlines we loaded. We could load much more content and have even more headlines.</p>
 <p>Now, if we tried to scrape the headlines just using rvest, this is what happens:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>EP_press <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://www.europarl.europa.eu/news/en/press-room&quot;</span>)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>headlines_rvest <span class="ot">&lt;-</span> EP_press <span class="sc">%&gt;%</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  rvest<span class="sc">::</span><span class="fu">html_nodes</span>(<span class="st">&#39;body&#39;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  xml2<span class="sc">::</span><span class="fu">xml_find_all</span>(<span class="st">&quot;//a[contains(@title, &#39;Read more&#39;)]&quot;</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()  <span class="sc">%&gt;%</span> </span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">trimws</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_data_frame</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">headline =</span> value)</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>headlines_rvest</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>EP_press <span class="ot">&lt;-</span> <span class="fu">read_html</span>(<span class="st">&quot;https://www.europarl.europa.eu/news/en/press-room&quot;</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>headlines_rvest <span class="ot">&lt;-</span> EP_press <span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  rvest<span class="sc">::</span><span class="fu">html_nodes</span>(<span class="st">&#39;body&#39;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  xml2<span class="sc">::</span><span class="fu">xml_find_all</span>(<span class="st">&quot;//a[contains(@title, &#39;Read more&#39;)]&quot;</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">html_text</span>()  <span class="sc">%&gt;%</span> </span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">trimws</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_data_frame</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">headline =</span> value)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>headlines_rvest</span></code></pre></div>
 <div data-pagedtable="false">
 <script data-pagedtable-source type="application/json">
 {"columns":[{"label":["headline"],"name":[1],"type":["chr"],"align":["left"]}],"data":[{"1":"Cybersecurity: MEPs strengthen EU-wide requirements against threats "},{"1":"Deal on stronger role for EU medicines regulator "},{"1":"Legal migration: an EU talent pool and more options for immigrant entrepreneurs "},{"1":"Hiring vehicles without drivers: provisional deal on new rules "},{"1":"MEPs oppose “breakaway competitions” and call for values-based EU sports model "},{"1":"Turkey: a serious diplomatic crisis that can still be avoided "},{"1":"MEPs to discuss possible EU budget fraud with Slovakian minister of Agriculture "},{"1":"Conference on the Future of Europe: second Plenary session concludes "},{"1":"Parliament to hold its second European Gender Equality Week "},{"1":"EP asks for part of Frontex budget to be frozen until key improvements are made "},{"1":"Poland: Constitutional Tribunal is illegitimate, unfit to interpret constitution "},{"1":"Tunisia: Deep concern about the powers concentrated in the President’s hands "},{"1":"Pandora Papers: MEPs call for investigations, clampdowns and new laws "},{"1":"COVID-19: Parliament wants more transparent EU vaccine policies "},{"1":"Climate change: raise global ambitions to achieve strong outcome at COP26 "}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}

@@ -20,10 +20,9 @@ knitr::opts_chunk$set(echo = TRUE,
                       error = FALSE,
                       message = FALSE,
                       warning = FALSE,
-                      comment = NA)
+                      comment = NA,
+                      results = TRUE)
 ```
-# First paragraph 
-# Second paragraph
 # Setting up R Selenium 
 1. Download a [Selenium Server](https://www.selenium.dev/downloads/). 
 2. Download the [current version](https://duckduckgo.com/?q=java+download&va=z&t=hk&ia=web) of Java SE Runtime Environment: 
@@ -44,13 +43,14 @@ pacman::p_load(RSelenium, tidyverse, rvest, binman)
 # Initiating a Selenium Server
 1. Check what version of Google Chrome you are using. 
 2. Check what version ChromeDriver you should use, depending on the above...
-```{r}
+```{r, echo = FALSE}
 binman::list_versions("chromedriver") 
 ```
 ...and use it as value for chromever: 
-```{r}
+```{r, results = "hide"}
 remDr <- rsDriver(browser = "chrome", chromever = "95.0.4638.17")
 rD <- remDr[['client']]
+
 ```
 
 Did it open a new Chrome window? Pretty cool, right? 
@@ -59,8 +59,7 @@ If it didn't, you are probably not using the correct version. Stop the server an
 # Practical example
 Now that we're all set, we can start navigating a web page of our choice. Let's go back to our previous example, the European Parliament [press room](https://www.europarl.europa.eu/news/en/press-room). 
 ```{r, echo = FALSE}
-url <- "https://www.europarl.europa.eu/news/en/press-room"
-rD$navigate(url)
+rD$navigate("https://www.europarl.europa.eu/news/en/press-room")
 Sys.sleep(5) 
 ```
 
@@ -74,7 +73,7 @@ load_more <- rD$findElement(using ='css selector', "#continuesLoading_button")
 ```
 
 Running this will automatically load more content on the web page. Assuming we are interested in more than just the initial 15 headlines, we want to hit the "load more" button several times. We could do this manually, running the code each time, or more efficiently: 
-```{r}
+```{r, , results = "hide"}
 for(i in 1:5) {
   print(i)
   load_more$clickElement()
@@ -86,7 +85,7 @@ Check the web page that RStudio has opened. See how the content is loaded automa
 
 
 Now, as promised, we can use our good old rvest tools to scrape data from the website. 
-```{r}
+```{r, results = 'asis'}
 page_source <- rD$getPageSource()
 
 headlines <-read_html(page_source[[1]]) %>%
