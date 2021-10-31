@@ -1,7 +1,7 @@
 ---
 title: "Dynamic Web Scraping with RSelenium"
 author: "Sofia Lai, Marina Luna"
-date: "10/27/2021"
+date: "4 November 2021"
 output: 
   html_document:
     toc: TRUE
@@ -64,16 +64,29 @@ Sys.sleep(5)
 ```
 
 Can you guess why this is a dynamic web page? 
-And what would happen if we tried to use static web scraping tools? (We'll see this in practice later) 
 Hint: click on "load more"... See any difference? 
 
-Let's locate the "load more" button. 
+Make sure to refuse or accept analytical cookies. You can do this manually, or through Selenium. 
+First, let's locate the "Refuse cookies" button. 
+```{r}
+refuse_cookies <- rD$findElement(using = "xpath" ,
+                                 "//*[@id='cookie-policy']/div/div[2]/button[1]/span")
+```
+
+Then, we use Selenium to interact with the the web page. 
+```{r}
+refuse_cookies$clickElement()
+```
+Check the web page. Is the message gone? 
+
+Perfect! Now let's load more content. 
+First, let's locate the "load more" button. 
 ```{r}
 load_more <- rD$findElement(using ='css selector', "#continuesLoading_button")
 ```
 
-Running this will automatically load more content on the web page. Assuming we are interested in more than just the initial 15 headlines, we want to hit the "load more" button several times. We could do this manually, running the code each time, or more efficiently: 
-```{r, , results = "hide"}
+Assuming we are interested in more than just the initial 15 headlines, we want to click on the "load more" button several times. Again, we could do this manually, running the code each time, or more efficiently: 
+```{r, results = 'hide'}
 for(i in 1:5) {
   print(i)
   load_more$clickElement()
@@ -81,13 +94,16 @@ for(i in 1:5) {
 }
 
 ```
-Check the web page that RStudio has opened. See how the content is loaded automatically? Sys.sleep(10) creates a time interval of 10 seconds between each time the action is executed.
+Check the web page that RStudio has opened. See how the content is loaded automatically? 
+Once we have loaded enough content, we can proceed to scrape the headlines. 
 
-
-Now, as promised, we can use our good old rvest tools to scrape data from the website. 
-```{r, results = 'asis'}
+One final step with Selenium... 
+```{r}
 page_source <- rD$getPageSource()
+```
 
+...And now we can use our good old rvest tools to scrape the data! 
+```{r}
 headlines <-read_html(page_source[[1]]) %>%
   rvest::html_nodes('body') %>%
   xml2::xml_find_all("//a[contains(@title, 'Read more')]") %>%
@@ -102,7 +118,8 @@ headlines
 Why RSelenium then? 
 You see here he have a nice list of all the headlines we loaded. We could load much more content and have even more headlines. 
 
-Now, if we tried to scrape the headlines just using rvest, this is what happens:
+# Scraping dynamic web pages with static tools? 
+What do you think would happen if we tried to scrape this page only using rvest? 
 ```{r}
 EP_press <- read_html("https://www.europarl.europa.eu/news/en/press-room")
 headlines_rvest <- EP_press %>%
@@ -114,6 +131,17 @@ headlines_rvest <- EP_press %>%
   rename(headline = value)
 headlines_rvest
 ```
-See? I only get the initial 15! This happens *even if* you manually load more content, you will always only get the first 15 headlines. 
+See? We only get the initial 15! This happens *even if* we manually loaded more content. We would always only get the first 15 headlines. Can you explain why this happened? 
+
+# So long, and thanks for all the data! 
+Thank you for attending this session. Here are some further resources you might find useful. 
+
+[Rselenium Github Page](https://github.com/ropensci/RSelenium)
+
+[RSelenium documentation](https://cran.r-project.org/web/packages/RSelenium/RSelenium.pdf)
+
+[Tutorial by Joshua McCrain](http://joshuamccrain.com/tutorials/web_scraping_R_selenium.html)
+
+[Selenium ecosystem](https://www.selenium.dev/)
 
 
