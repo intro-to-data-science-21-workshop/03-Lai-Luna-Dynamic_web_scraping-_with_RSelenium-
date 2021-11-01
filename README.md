@@ -16,8 +16,8 @@ The goals of this session are to (1) equip you with conceptual knowledge about d
 
 ## Instructors
 
-- Marina Luna ([website](https://github.com/marinaluna-hertie)
-- Sofia Lai ([website](https://github.com/sofialai)
+- Marina Luna ([website](https://github.com/marinaluna-hertie))
+- Sofia Lai ([website](https://github.com/sofialai))
 
 
 ## Further resources
