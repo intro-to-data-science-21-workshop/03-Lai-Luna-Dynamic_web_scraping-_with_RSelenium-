@@ -25,7 +25,7 @@ knitr::opts_chunk$set(echo = TRUE,
 ```
 # Setting up R Selenium 
 1. Download a [Selenium Server](https://www.selenium.dev/downloads/). 
-2. Download the [current version](https://duckduckgo.com/?q=java+download&va=z&t=hk&ia=web) of Java SE Runtime Environment: 
+2. Download the [current version](https://duckduckgo.com/?q=java+download&va=z&t=hk&ia=web) of Java SE Runtime Environment
 
 3. Install and load necessary packages 
 ```{r, include = T}
@@ -46,7 +46,7 @@ pacman::p_load(RSelenium, tidyverse, rvest, binman)
 ```{r, echo = FALSE}
 binman::list_versions("chromedriver") 
 ```
-...and use it as value for chromever: 
+3. ...and use it as value for chromever: 
 ```{r, results = "hide"}
 remDr <- rsDriver(browser = "chrome", chromever = "95.0.4638.17")
 rD <- remDr[['client']]
@@ -56,17 +56,16 @@ rD <- remDr[['client']]
 Did it open a new Chrome window? Pretty cool, right? 
 If it didn't, you are probably not using the correct version. Stop the server and try again. 
 
-# Practical example
+# Practical example 
 Now that we're all set, we can start navigating a web page of our choice. Let's go back to our previous example, the European Parliament [press room](https://www.europarl.europa.eu/news/en/press-room). 
 ```{r, echo = FALSE}
 rD$navigate("https://www.europarl.europa.eu/news/en/press-room")
 Sys.sleep(5) 
 ```
 
-Can you guess why this is a dynamic web page? 
-Hint: click on "load more"... See any difference? 
 
 Make sure to refuse or accept analytical cookies. You can do this manually, or through Selenium. 
+
 First, let's locate the "Refuse cookies" button. 
 ```{r}
 refuse_cookies <- rD$findElement(using = "xpath" ,
@@ -78,6 +77,10 @@ Then, we use Selenium to interact with the the web page.
 refuse_cookies$clickElement()
 ```
 Check the web page. Is the message gone? 
+
+Can you guess why this is a dynamic web page? 
+
+Hint: click on "load more"... See any difference? 
 
 Perfect! Now let's load more content. 
 First, let's locate the "load more" button. 
@@ -104,7 +107,7 @@ page_source <- rD$getPageSource()
 
 ...And now we can use our good old rvest tools to scrape the data! 
 ```{r}
-headlines <-read_html(page_source[[1]]) %>%
+headlines <- read_html(page_source[[1]]) %>%
   rvest::html_nodes('body') %>%
   xml2::xml_find_all("//a[contains(@title, 'Read more')]") %>%
   html_text() %>%
@@ -116,7 +119,7 @@ headlines <-read_html(page_source[[1]]) %>%
 headlines
 ```
 Why RSelenium then? 
-You see here he have a nice list of all the headlines we loaded. We could load much more content and have even more headlines. 
+You see here we have a nice list of all the headlines we loaded. We could load much more content and have even more headlines. 
 
 # Scraping dynamic web pages with static tools? 
 What do you think would happen if we tried to scrape this page only using rvest? 
