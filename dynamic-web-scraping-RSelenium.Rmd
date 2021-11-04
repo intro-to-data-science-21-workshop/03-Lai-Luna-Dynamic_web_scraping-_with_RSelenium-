@@ -41,7 +41,7 @@ pacman::p_load(RSelenium, tidyverse, rvest, binman)
 ```
 
 # Initiating a Selenium Server
-1. Check what version of Google Chrome you are using. 
+1. Check what version of Google Chrome you are using. 95
 2. Check what version ChromeDriver you should use, depending on the above...
 ```{r, echo = FALSE}
 binman::list_versions("chromedriver") 
@@ -50,11 +50,10 @@ binman::list_versions("chromedriver")
 ```{r, results = "hide"}
 remDr <- rsDriver(browser = "chrome", chromever = "95.0.4638.17")
 rD <- remDr[['client']]
-
 ```
 
 Did it open a new Chrome window? Pretty cool, right? 
-If it didn't, you are probably not using the correct version. Stop the server and try again. 
+If it didn't, you are probably not using the correct version. Stop the server and try again.
 
 # Practical example 
 Now that we're all set, we can start navigating a web page of our choice. Let's go back to our previous example, the European Parliament [press room](https://www.europarl.europa.eu/news/en/press-room). 
@@ -64,7 +63,7 @@ Sys.sleep(5)
 ```
 
 
-Make sure to refuse or accept analytical cookies. You can do this manually, or through Selenium. 
+Make sure to refuse or accept analytics cookies. You can do this manually, or through Selenium. 
 
 First, let's locate the "Refuse cookies" button. 
 ```{r}
@@ -110,7 +109,7 @@ page_source <- rD$getPageSource()
 headlines <- read_html(page_source[[1]]) %>%
   rvest::html_nodes('body') %>%
   xml2::xml_find_all("//a[contains(@title, 'Read more')]") %>%
-  html_text() %>%
+  html_text() %>% 
   trimws() %>% #some cleaning...
   as_data_frame() %>% 
   rename(headline = value) %>%
@@ -135,6 +134,12 @@ headlines_rvest <- EP_press %>%
 headlines_rvest
 ```
 See? We only get the initial 15! This happens *even if* we manually loaded more content. We would always only get the first 15 headlines. Can you explain why this happened? 
+
+Close the server.
+```{r}
+remDr$server$stop()
+```
+
 
 # So long, and thanks for all the data! 
 Thank you for attending this session. Here are some further resources you might find useful. 
